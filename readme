@@ -1,0 +1,13 @@
+Name:
+    Mark Matta
+
+Install Directions:
+    Need to install Imdb before importing and running my program.
+
+Program Description:
+    My program gets the top 250 shows from IMDB using an api key
+    and writes their information to an output file. The program
+    also gets the IDs for the 1st, 50th, 100th and 200th ranked
+    shows and displays their ratings data. The program also
+    displays the ratings data for the show 'Wheel of time'.
+
