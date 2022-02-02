@@ -1,0 +1,85 @@
+imDbId : tt7462410
+title : The Wheel of Time
+fullTitle : The Wheel of Time (TV Series 2021– )
+type : TVSeries
+year : 2021
+totalRating : 0
+totalRatingVotes : 83054
+	rating : 10	percent : 25.6%	votes : 21257
+	rating : 9	percent : 14.1%	votes : 11740
+	rating : 8	percent : 20.1%	votes : 16668
+	rating : 7	percent : 14.4%	votes : 11953
+	rating : 6	percent : 7.3%	votes : 6051
+	rating : 5	percent : 4.3%	votes : 3534
+	rating : 4	percent : 2.5%	votes : 2105
+	rating : 3	percent : 2.5%	votes : 2076
+	rating : 2	percent : 2.3%	votes : 1938
+	rating : 1	percent : 6.9%	votes : 5732
+errorMessage : 
+
+imDbId : tt5491994
+title : Planet Earth II
+fullTitle : Planet Earth II (TV Series 2016–2016)
+type : TVSeries
+year : 2016
+totalRating : 0
+totalRatingVotes : 107575
+	rating : 10	percent : 62.0%	votes : 66675
+	rating : 9	percent : 19.8%	votes : 21327
+	rating : 8	percent : 6.9%	votes : 7452
+	rating : 7	percent : 2.0%	votes : 2139
+	rating : 6	percent : 0.7%	votes : 752
+	rating : 5	percent : 0.5%	votes : 525
+	rating : 4	percent : 0.2%	votes : 254
+	rating : 3	percent : 0.2%	votes : 262
+	rating : 2	percent : 0.3%	votes : 313
+	rating : 1	percent : 7.3%	votes : 7876
+errorMessage : 
+
+imDbId : tt0081834
+title : Das Boot
+fullTitle : Das Boot (TV Series 1985–1987)
+type : TVSeries
+year : 1985
+totalRating : 0
+totalRatingVotes : 28559
+	rating : 10	percent : 32.9%	votes : 9403
+	rating : 9	percent : 33.2%	votes : 9474
+	rating : 8	percent : 20.1%	votes : 5745
+	rating : 7	percent : 6.4%	votes : 1825
+	rating : 6	percent : 2.0%	votes : 570
+	rating : 5	percent : 1.0%	votes : 278
+	rating : 4	percent : 0.4%	votes : 126
+	rating : 3	percent : 0.3%	votes : 83
+	rating : 2	percent : 0.4%	votes : 119
+	rating : 1	percent : 3.3%	votes : 936
+errorMessage : 
+
+imDbId : tt0096697
+title : The Simpsons
+fullTitle : The Simpsons (TV Series 1989– )
+type : TVSeries
+year : 1989
+totalRating : 0
+totalRatingVotes : 388146
+	rating : 10	percent : 37.1%	votes : 143994
+	rating : 9	percent : 25.3%	votes : 98035
+	rating : 8	percent : 19.7%	votes : 76481
+	rating : 7	percent : 9.7%	votes : 37646
+	rating : 6	percent : 3.4%	votes : 13325
+	rating : 5	percent : 1.6%	votes : 6042
+	rating : 4	percent : 0.7%	votes : 2643
+	rating : 3	percent : 0.4%	votes : 1731
+	rating : 2	percent : 0.4%	votes : 1411
+	rating : 1	percent : 1.8%	votes : 6838
+errorMessage : 
+
+imDbId : tt2100976
+title : Impractical Jokers
+fullTitle : Impractical Jokers (TV Series 2011– )
+type : TVSeries
+year : 2011
+totalRating : 0
+totalRatingVotes : 0
+errorMessage : 
+
