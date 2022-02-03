@@ -1,6 +1,5 @@
 import secrets
 import requests
-import json
 import imdb
 
 # open text file
