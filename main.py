@@ -11,8 +11,8 @@ file1 = open('output.txt', 'w')
 
 def main():
     # create list of Ids
-    #id_num_list = ['tt7462410', 'tt5491994', 'tt0081834', 'tt0096697', 'tt2100976']
-    #loop through list and write data for each show Id to output file
+    # id_num_list = ['tt7462410', 'tt5491994', 'tt0081834', 'tt0096697', 'tt2100976']
+    # loop through list and write data for each show Id to output file
     # for i in range(len(id_num_list)):
     #     print_show_data(id_num_list[i])
     #     file1.write('\n')
@@ -82,8 +82,9 @@ def print_show_data(cursor: sqlite3.Cursor):
                 imdb_rating = value
             elif key == "imDbRatingCount":
                 imdb_rating_count = value
-        cursor.execute(f'''INSERT INTO top_250_data (show_id, title, full_title, year, crew, imdb_rating, imdb_rating_count)
-                           VALUES (?, ?, ?, ?, ?, ?, ?)''', (int(show_id), title, full_title, year, crew, imdb_rating, imdb_rating_count))
+        cursor.execute(f'''INSERT INTO top_250_data (show_id, title, full_title, year, crew, imdb_rating, 
+                        imdb_rating_count) VALUES (?, ?, ?, ?, ?, ?, ?)''',
+                       (int(show_id), title, full_title, year, crew, imdb_rating, imdb_rating_count))
 
 
 def get_top250_data():
@@ -99,8 +100,8 @@ def get_top250_data():
 
 
 def open_db(filename: str) -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
-    db_connection = sqlite3.connect(filename)#connect to existing DB or create new one
-    cursor = db_connection.cursor()#get ready to read/write data
+    db_connection = sqlite3.connect(filename)  # connect to existing DB or create new one
+    cursor = db_connection.cursor()  # get ready to read/write data
     return db_connection, cursor
 
 
@@ -147,7 +148,7 @@ def make_initial_top250(cursor: sqlite3.Cursor):
 
 
 def close_db(connection: sqlite3.Connection):
-    connection.commit()#make sure any changes get saved
+    connection.commit()  # make sure any changes get saved
     connection.close()
 
 
