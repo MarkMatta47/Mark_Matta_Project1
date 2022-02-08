@@ -7,6 +7,13 @@ from typing import Tuple
 
 # open text file
 file1 = open('output.txt', 'w')
+show_id = 0
+title = ''
+full_title = ''
+year = ''
+crew = ''
+imdb_rating = ''
+imdb_rating_count = ''
 
 
 def main():
@@ -55,14 +62,6 @@ def print_show_data(cursor: sqlite3.Cursor):
         print("help!")
         return
     data = results.json()
-
-    show_id = 0
-    title = ''
-    full_title = ''
-    year = ''
-    crew = ''
-    imdb_rating = ''
-    imdb_rating_count = ''
 
     # loop through list of dictionaries assigned to "items" key
     for entry in data["items"]:
