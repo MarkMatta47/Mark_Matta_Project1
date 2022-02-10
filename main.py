@@ -13,7 +13,8 @@ imdb_id_list = []
 
 def main():
     # create list of Ids
-    id_num_list = ['tt7462410', 'tt5491994', 'tt0081834', 'tt0096697']
+    id_num_list = ['tt7462410', 'tt5491994', 'tt0081834', 'tt0096697', 'tt1492966']
+
     # # loop through list and write data for each show Id to output file
     for i in range(len(id_num_list)):
         print_show_data(id_num_list[i])
@@ -21,10 +22,14 @@ def main():
 
     # function call for getting top 250 show data
     get_top250_data()
+
     conn, cursor = open_db("sprint2_db.sqlite")
     setup_db(cursor)
 
+    # function call to add show data to db
     add_show_data_to_db(cursor)
+
+    # function call to add ratings data to db
     for i in range(len(id_num_list)):
         add_rating_data_to_db(cursor, id_num_list[i])
 
@@ -61,14 +66,17 @@ def add_show_data_to_db(cursor: sqlite3.Cursor):
         print("help!")
         return
     data = results.json()
-    count = 1
+
     # loop through list of dictionaries assigned to "items" key
     for entry in data["items"]:
-        cursor.execute(f'''INSERT INTO top_250_data (id, title, fullTitle, year, crew, imDbRating,
+        cursor.execute(f'''INSERT INTO top_250_data (imdb_id, title, fullTitle, year, crew, imDbRating,
                         imDbRatingCount) VALUES (?, ?, ?, ?, ?, ?, ?)''',
-                       (count, entry['title'], entry['fullTitle'], entry['year'], entry['crew'], entry['imDbRating'],
-                        entry['imDbRatingCount']))
-        count += 1
+                       (entry['id'], entry['title'], entry['fullTitle'], entry['year'], entry['crew'],
+                        entry['imDbRating'], entry['imDbRatingCount']))
+    cursor.execute(f'''INSERT INTO top_250_data (imdb_id, title, fullTitle, year, crew, imDbRating,
+                            imDbRatingCount) VALUES (?, ?, ?, ?, ?, ?, ?)''',
+                   ('tt7462410', 'The Wheel of Time', 'The Wheel of Time (TV Series 2021– )', '2021',
+                    'People', '0', '84387'))
 
 
 def add_rating_data_to_db(cursor: sqlite3.Cursor, id_num: str):
@@ -80,12 +88,12 @@ def add_rating_data_to_db(cursor: sqlite3.Cursor, id_num: str):
         return
     data = results.json()
 
-    cursor.execute(f'''INSERT INTO ratings_data (total_rating, total_rating_votes, rating_percent_10,
+    cursor.execute(f'''INSERT INTO ratings_data (imdb_id, total_rating, total_rating_votes, rating_percent_10,
     rating_votes_10, rating_percent_9, rating_votes_9, rating_percent_8, rating_votes_8, rating_percent_7,
     rating_votes_7, rating_percent_6, rating_votes_6, rating_percent_5, rating_votes_5, rating_percent_4,
     rating_votes_4, rating_percent_3, rating_votes_3, rating_percent_2, rating_votes_2, rating_percent_1,
-    rating_votes_1) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',
-                   (data['totalRating'], data['totalRatingVotes'],
+    rating_votes_1) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',
+                   (data['imDbId'], data['totalRating'], data['totalRatingVotes'],
                     data['ratings'][0]['percent'], data['ratings'][0]['votes'],
                     data['ratings'][1]['percent'], data['ratings'][1]['votes'],
                     data['ratings'][2]['percent'], data['ratings'][2]['votes'],
@@ -118,7 +126,7 @@ def open_db(filename: str) -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
 
 def setup_db(cursor: sqlite3.Cursor):
     cursor.execute('''CREATE TABLE IF NOT EXISTS top_250_data(
-    id INTEGER PRIMARY KEY,
+    imdb_id TEXT NOT NULL PRIMARY KEY,
     title TEXT NOT NULL,
     fullTitle TEXT NOT NULL,
     year TEXT NOT NULL,
@@ -128,6 +136,7 @@ def setup_db(cursor: sqlite3.Cursor):
     );''')
     cursor.execute('''CREATE TABLE IF NOT EXISTS ratings_data(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    imdb_id TEXT NOT NULL,
     total_rating TEXT NOT NULL,
     total_rating_votes TEXT NOT NULL,
     rating_percent_10 TEXT NOT NULL,
@@ -149,13 +158,9 @@ def setup_db(cursor: sqlite3.Cursor):
     rating_percent_2 TEXT NOT NULL,
     rating_votes_2 TEXT NOT NULL,
     rating_percent_1 TEXT NOT NULL,
-    rating_votes_1 TEXT NOT NULL
+    rating_votes_1 TEXT NOT NULL,
+    FOREIGN KEY (imdb_id) REFERENCES top_250_data (imdb_id)
     );''')
-
-
-# def make_initial_top250(cursor: sqlite3.Cursor):
-#     cursor.execute(f'''INSERT INTO top_250_data (show_id, title, full_title, year, crew, imdb_rating, imdb_rating_count)
-#                    VALUES (1004, "the show", "the 250 show", 200.98, "10 people", 7, 2987.5)''')
 
 
 def close_db(connection: sqlite3.Connection):
