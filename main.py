@@ -8,35 +8,26 @@ from typing import Tuple
 # open text file
 file1 = open('output.txt', 'w')
 
-show_id = 0
-title = ''
-full_title = ''
-year = ''
-crew = ''
-imdb_rating = ''
-imdb_rating_count = ''
-
 imdb_id = ''
 imdb_id_list = []
 
 
 def main():
     # create list of Ids
-    id_num_list = ['tt7462410', 'tt5491994', 'tt0081834', 'tt0096697', 'tt2100976']
+    id_num_list = ['tt7462410', 'tt5491994', 'tt0081834', 'tt0096697']
     # # loop through list and write data for each show Id to output file
-    # for i in range(len(id_num_list)):
-    #     print_show_data(id_num_list[i])
-    #     file1.write('\n')
-
     for i in range(len(id_num_list)):
-        add_rating_data_to_db(id_num_list[i])
+        print_show_data(id_num_list[i])
+        file1.write('\n')
 
     # function call for getting top 250 show data
     get_top250_data()
     conn, cursor = open_db("sprint2_db.sqlite")
     setup_db(cursor)
-    # make_initial_top250(cursor)
+
     add_show_data_to_db(cursor)
+    for i in range(len(id_num_list)):
+        add_rating_data_to_db(cursor, id_num_list[i])
 
     print(type(conn))
     close_db(conn)
@@ -82,8 +73,7 @@ def add_show_data_to_db(cursor: sqlite3.Cursor):
         count += 1
 
 
-def add_rating_data_to_db(id_num: str):
-    rating_percent_10 = ''
+def add_rating_data_to_db(cursor: sqlite3.Cursor, id_num: str):
     # use secret key to get show ratings data
     loc = f"https://imdb-api.com/en/API/UserRatings/{secrets.secret_key}/{id_num}"
     results = requests.get(loc)
@@ -92,14 +82,22 @@ def add_rating_data_to_db(id_num: str):
         return
     data = results.json()
 
-    for key, value in data.items():
-        if key == 'ratings':
-            for i in range(len(data['ratings'])):
-                for rating_key, rating_value in data['ratings'][i].items():
-                    if rating_key == 'percent':
-                        rating_percent_10 = value
-            print(rating_percent_10)
-
+    cursor.execute(f'''INSERT INTO ratings_data (total_rating, total_rating_votes, rating_percent_10, 
+    rating_votes_10, rating_percent_9, rating_votes_9, rating_percent_8, rating_votes_8, rating_percent_7, 
+    rating_votes_7, rating_percent_6, rating_votes_6, rating_percent_5, rating_votes_5, rating_percent_4, 
+    rating_votes_4, rating_percent_3, rating_votes_3, rating_percent_2, rating_votes_2, rating_percent_1, 
+    rating_votes_1) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',
+                   (data['totalRating'], data['totalRatingVotes'],
+                    data['ratings'][0]['percent'], data['ratings'][0]['votes'],
+                    data['ratings'][1]['percent'], data['ratings'][1]['votes'],
+                    data['ratings'][2]['percent'], data['ratings'][2]['votes'],
+                    data['ratings'][3]['percent'], data['ratings'][3]['votes'],
+                    data['ratings'][4]['percent'], data['ratings'][4]['votes'],
+                    data['ratings'][5]['percent'], data['ratings'][5]['votes'],
+                    data['ratings'][6]['percent'], data['ratings'][6]['votes'],
+                    data['ratings'][7]['percent'], data['ratings'][7]['votes'],
+                    data['ratings'][8]['percent'], data['ratings'][8]['votes'],
+                    data['ratings'][9]['percent'], data['ratings'][9]['votes']))
 
 
 def get_top250_data():
@@ -131,29 +129,29 @@ def setup_db(cursor: sqlite3.Cursor):
     imDbRatingCount TEXT NOT NULL
     );''')
     cursor.execute('''CREATE TABLE IF NOT EXISTS ratings_data(
-    imdb_id INTEGER PRIMARY KEY,
-    total_rating INTEGER NOT NULL,
-    total_rating_votes INTEGER NOT NULL,
-    rating_percent_10 INTEGER NOT NULL,
-    rating_votes_10 INTEGER NOT NULL,
-    rating_percent_9 INTEGER NOT NULL,
-    rating_votes_9 INTEGER NOT NULL,
-    rating_percent_8 INTEGER NOT NULL,
-    rating_votes_8 INTEGER NOT NULL,
-    rating_percent_7 INTEGER NOT NULL,
-    rating_votes_7 INTEGER NOT NULL,
-    rating_percent_6 INTEGER NOT NULL,
-    rating_votes_6 INTEGER NOT NULL,
-    rating_percent_5 INTEGER NOT NULL,
-    rating_votes_5 INTEGER NOT NULL,
-    rating_percent_4 INTEGER NOT NULL,
-    rating_votes_4 INTEGER NOT NULL,
-    rating_percent_3 INTEGER NOT NULL,
-    rating_votes_3 INTEGER NOT NULL,
-    rating_percent_2 INTEGER NOT NULL,
-    rating_votes_2 INTEGER NOT NULL,
-    rating_percent_1 INTEGER NOT NULL,
-    rating_votes_1 INTEGER NOT NULL
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    total_rating TEXT NOT NULL,
+    total_rating_votes TEXT NOT NULL,
+    rating_percent_10 TEXT NOT NULL,
+    rating_votes_10 TEXT NOT NULL,
+    rating_percent_9 TEXT NOT NULL,
+    rating_votes_9 TEXT NOT NULL,
+    rating_percent_8 TEXT NOT NULL,
+    rating_votes_8 TEXT NOT NULL,
+    rating_percent_7 TEXT NOT NULL,
+    rating_votes_7 TEXT NOT NULL,
+    rating_percent_6 TEXT NOT NULL,
+    rating_votes_6 TEXT NOT NULL,
+    rating_percent_5 TEXT NOT NULL,
+    rating_votes_5 TEXT NOT NULL,
+    rating_percent_4 TEXT NOT NULL,
+    rating_votes_4 TEXT NOT NULL,
+    rating_percent_3 TEXT NOT NULL,
+    rating_votes_3 TEXT NOT NULL,
+    rating_percent_2 TEXT NOT NULL,
+    rating_votes_2 TEXT NOT NULL,
+    rating_percent_1 TEXT NOT NULL,
+    rating_votes_1 TEXT NOT NULL
     );''')
 
 
