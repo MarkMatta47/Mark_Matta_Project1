@@ -117,6 +117,8 @@ def get_top250_data():
             file1.write('\n')
         file1.write('\n')
 
+    return search
+
 
 def open_db(filename: str) -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
     db_connection = sqlite3.connect(filename)  # connect to existing DB or create new one
