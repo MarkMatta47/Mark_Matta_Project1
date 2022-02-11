@@ -10,4 +10,15 @@ Program Description:
     also gets the IDs for the 1st, 50th, 100th and 200th ranked
     shows and displays their ratings data. The program also
     displays the ratings data for the show 'Wheel of time'.
+    My program also creates a database and then creates 2
+    tables in that database. The first table is for the top
+    250 shows data and the second table is for the ratings data
+    for 5 shows. My program will then add this data into the
+    tables in the database. I also wrote a test to ensure that
+    I retrieved 250 data items for the top 250 shows.
+
+Missing:
+    My program is missing the second automated test. My first
+    test runs and executes correctly on pycharm but fails on
+    github. Everything else on github actions passes.
 
