@@ -1,6 +1,5 @@
 import secrets
 import requests
-import imdb
 import sqlite3
 from typing import Tuple
 
@@ -115,17 +114,27 @@ def add_rating_data_to_db(cursor: sqlite3.Cursor, id_num: str):
 
 
 def get_top250_data():
-    ia = imdb.IMDb()
-    search = ia.get_top250_tv()
+    # use secret key to get show data
+    loc = f"https://imdb-api.com/en/API/Top250TVs/{secrets.secret_key}/"
+    results = requests.get(loc)
+    if results.status_code != 200:
+        print("help!")
+        return
+    data = results.json()
+    print(data)
 
-    # loop through top 250 shows and write them to output file
-    for i in range(250):
-        for key, value in search[i].items()[0:6]:
-            file1.write(f'{key} : {value}')
+    for key, value in data.items():
+        if key == 'items':
+            for i in range(len(data['items'])):
+                for rating_key, rating_value in data['items'][i].items():
+                    file1.writelines(rating_key + ' : ' + rating_value)
+                    file1.write('\n')
+                file1.write('\n')
+        else:
+            file1.writelines(f'{key} : {value}')
             file1.write('\n')
-        file1.write('\n')
 
-    return search
+    return data
 
 
 def get_top_tvs(cursor: sqlite3.Cursor):
