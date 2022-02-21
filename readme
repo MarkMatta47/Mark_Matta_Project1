@@ -2,7 +2,7 @@ Name:
     Mark Matta
 
 Install Directions:
-    Need to install Imdb before importing and running my program.
+    None
 
 Program Description:
     My program gets the top 250 shows from IMDB using an api key
@@ -15,10 +15,15 @@ Program Description:
     250 shows data and the second table is for the ratings data
     for 5 shows. My program will then add this data into the
     tables in the database. I also wrote a test to ensure that
-    I retrieved 250 data items for the top 250 shows.
+    I retrieved 250 data items for the top 250 shows. My program
+    now also gets the data for the top 250 movies, the most popular
+    movies, the 3 highest positive changed movies and the lowest
+    changed movies and then I got the ranking data for these 4 movies.
+    With this data, my program created 4 new tables in my database
+    to store all the data for the movies.
 
 Missing:
-    My program is missing the second automated test. My first
-    test runs and executes correctly on pycharm but fails on
-    github. Everything else on github actions passes.
+    My program is missing the tests for sprint 3. Im having
+    trouble understanding them and I wasn't able to figure them
+    out in time.
 
