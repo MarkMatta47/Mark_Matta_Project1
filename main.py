@@ -382,6 +382,8 @@ class MainWindow(QWidget):
 class DisplayWindow(QWidget):
     def __init__(self):
         super(DisplayWindow, self).__init__()
+        self.movie_info_window = None
+        self.show_info_window = None
         self.title = QLabel(self)
         self.movie_info_button = QPushButton(self)
         self.show_info_button = QPushButton(self)
@@ -411,8 +413,100 @@ class DisplayWindow(QWidget):
         self.show_info_button.setText('Shows')
 
         # Signals/Slots
-        # self.movie_info_button.clicked.connect(self.movie_info_button)
-        # self.show_info_button.clicked.connect(self.show_info_button)
+        self.movie_info_button.clicked.connect(self.movie_info_button_clicked)
+        self.show_info_button.clicked.connect(self.show_info_button_clicked)
+
+    def show_info_button_clicked(self):
+        print('Displayed!')
+        self.show_info_window = DisplayShowWindow()
+        self.show_info_window.show()
+        self.close()
+
+    def movie_info_button_clicked(self):
+        print('Displayed!')
+        self.movie_info_window = DisplayMovieWindow()
+        self.movie_info_window.show()
+        self.close()
+
+
+class DisplayShowWindow(QWidget):
+    def __init__(self):
+        super(DisplayShowWindow, self).__init__()
+        self.title = QLabel(self)
+        self.shows_up_button = QPushButton(self)
+        self.shows_down_button = QPushButton(self)
+        self.setup_ui()
+
+    def setup_ui(self):
+        # Window
+        self.resize(600, 500)
+        window_width = int(self.frameGeometry().width())
+        self.setWindowTitle("Display Show Window")
+
+        # Title
+        self.title.setText("Choose an option")
+        self.title.setFont(QFont('Georgia', 16, QFont.Bold))
+        self.title.adjustSize()
+        self.title.setAlignment(QtCore.Qt.AlignCenter)
+        self.title.move(int((window_width - self.title.width()) / 2), 100)
+
+        # Shows up Button
+        self.shows_up_button.resize(100, 50)
+        self.shows_up_button.move(250, 300)
+        self.shows_up_button.setText('Shows Up')
+
+        # Shows down Button
+        self.shows_down_button.resize(100, 50)
+        self.shows_down_button.move(355, 300)
+        self.shows_down_button.setText('Shows Down')
+
+        # Signals/Slots
+        self.shows_up_button.clicked.connect(self.shows_up_button_clicked)
+        self.shows_down_button.clicked.connect(self.shows_down_button_clicked)
+
+    def shows_up_button_clicked(self):
+        print('Displayed!')
+        self.close()
+
+    def shows_down_button_clicked(self):
+        print('Displayed!')
+        self.close()
+
+
+class DisplayMovieWindow(QWidget):
+    def __init__(self):
+        super(DisplayMovieWindow, self).__init__()
+        self.title = QLabel(self)
+        self.movies_up_button = QPushButton(self)
+        self.movies_down_button = QPushButton(self)
+        self.setup_ui()
+
+    def setup_ui(self):
+        # Window
+        self.resize(600, 500)
+        window_width = int(self.frameGeometry().width())
+        self.setWindowTitle("Display Movie Window")
+
+        # Title
+        self.title.setText("Choose an option")
+        self.title.setFont(QFont('Georgia', 16, QFont.Bold))
+        self.title.adjustSize()
+        self.title.setAlignment(QtCore.Qt.AlignCenter)
+        self.title.move(int((window_width - self.title.width()) / 2), 100)
+
+        # Shows up Button
+        self.movies_up_button.resize(100, 50)
+        self.movies_up_button.move(250, 300)
+        self.movies_up_button.setText('Movies Up')
+
+        # Shows down Button
+        self.movies_down_button.resize(100, 50)
+        self.movies_down_button.move(355, 300)
+        self.movies_down_button.setText('Movies Down')
+
+        # Signals/Slots
+        # self.movies_up_button.clicked.connect(self.movies_up_button_clicked)
+        # self.movies_down_button.clicked.connect(self.movies_down_button_clicked)
 
         self.show()
 
