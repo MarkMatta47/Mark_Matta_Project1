@@ -2,7 +2,7 @@ Name:
     Mark Matta
 
 Install Directions:
-    None
+    Install pyqt5
 
 Program Description:
     My program gets the top 250 shows from IMDB using an api key
@@ -22,8 +22,12 @@ Program Description:
     With this data, my program created 4 new tables in my database
     to store all the data for the movies.
 
+    Sprint4: My program uses pyqt5 to prompt the user. The user
+    has the option to add the previous data to the database and
+    to display the data. The user will do this by clicking buttons
+    that will appear on their screen. The data will be displayed
+    using the pyqt5 windows.
+
 Missing:
-    My program is missing the tests for sprint 3. Im having
-    trouble understanding them and I wasn't able to figure them
-    out in time.
+    Missing the tests and the data visualization
 
