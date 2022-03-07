@@ -6,6 +6,10 @@ from typing import Tuple
 from PyQt5.QtGui import QFont
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QApplication, QPushButton, QLabel, QWidget
+from PyQt5 import QtWidgets
+from pyqtgraph import PlotWidget, plot
+import pyqtgraph as pg
+import os
 
 
 file1 = open('output.txt', 'w')
@@ -20,6 +24,8 @@ def main():
     app = QApplication(sys.argv)
     ex = MainWindow()
     print(ex)
+
+    # get_movies_up()
 
     # # loop through list and write data for each show Id to output file
     for i in range(len(id_num_list)):
@@ -206,6 +212,73 @@ def get_movie_rating_data(cursor: sqlite3.Cursor, id_num: str, conn):
     conn.commit()
 
 
+def get_movies_up():
+    loc = f"https://imdb-api.com/en/API/MostPopularMovies/{secrets.secret_key}/"
+    results = requests.get(loc)
+    if results.status_code != 200:
+        print("help!")
+        return
+    data = results.json()
+    movie_rank_up_list = []
+    for items in range(len(data['items'])):
+        ranks = (data['items'][items]['rankUpDown'])
+        if ranks[0] == '+':
+            movie_rank_up_list.append(data['items'][items]['title'])
+            movie_rank_up_list.append(ranks)
+
+    print(movie_rank_up_list)
+
+
+def get_movies_down():
+    loc = f"https://imdb-api.com/en/API/MostPopularMovies/{secrets.secret_key}/"
+    results = requests.get(loc)
+    if results.status_code != 200:
+        print("help!")
+        return
+    data = results.json()
+    movie_rank_down_list = []
+    for items in range(len(data['items'])):
+        ranks = (data['items'][items]['rankUpDown'])
+        if ranks[0] == '-':
+            movie_rank_down_list.append(data['items'][items]['title'])
+            movie_rank_down_list.append(ranks)
+    print(movie_rank_down_list)
+
+
+def get_tvs_up():
+    # use secret key to get show ratings data
+    loc = f"https://imdb-api.com/en/API/MostPopularTVs/{secrets.secret_key}/"
+    results = requests.get(loc)
+    if results.status_code != 200:
+        print("help!")
+        return
+    data = results.json()
+    tv_rank_up_list = []
+    for items in range(len(data['items'])):
+        ranks = (data['items'][items]['rankUpDown'])
+        if ranks[0] == '+':
+            tv_rank_up_list.append(data['items'][items]['title'])
+            tv_rank_up_list.append(ranks)
+    print(tv_rank_up_list)
+
+
+def get_tvs_down():
+    # use secret key to get show ratings data
+    loc = f"https://imdb-api.com/en/API/MostPopularTVs/{secrets.secret_key}/"
+    results = requests.get(loc)
+    if results.status_code != 200:
+        print("help!")
+        return
+    data = results.json()
+    tv_rank_down_list = []
+    for items in range(len(data['items'])):
+        ranks = (data['items'][items]['rankUpDown'])
+        if ranks[0] == '-':
+            tv_rank_down_list.append(data['items'][items]['title'])
+            tv_rank_down_list.append(ranks)
+    print(tv_rank_down_list)
+
+
 def open_db(filename: str) -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
     db_connection = sqlite3.connect(filename)  # connect to existing DB or create new one
     cursor = db_connection.cursor()  # get ready to read/write data
@@ -313,8 +386,8 @@ def setup_db(cursor: sqlite3.Cursor):
 
 
 class MainWindow(QWidget):
-    def __init__(self):
-        super(MainWindow, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super(MainWindow, self).__init__(*args, **kwargs)
         self.display_window = None
         conn, cursor = open_db("sprint2_db.sqlite")
         self.title = QLabel(self)
@@ -429,7 +502,7 @@ class DisplayWindow(QWidget):
         self.close()
 
 
-class DisplayShowWindow(QWidget):
+class DisplayShowWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(DisplayShowWindow, self).__init__()
         self.title = QLabel(self)
@@ -465,11 +538,13 @@ class DisplayShowWindow(QWidget):
         self.shows_down_button.clicked.connect(self.shows_down_button_clicked)
 
     def shows_up_button_clicked(self):
-        print('Displayed!')
+        print('Displayed the shows trending up!')
+        get_tvs_up()
         self.close()
 
     def shows_down_button_clicked(self):
-        print('Displayed!')
+        print('Displayed the shows trending down!')
+        get_tvs_down()
         self.close()
 
 
@@ -505,10 +580,18 @@ class DisplayMovieWindow(QWidget):
         self.movies_down_button.setText('Movies Down')
 
         # Signals/Slots
-        # self.movies_up_button.clicked.connect(self.movies_up_button_clicked)
-        # self.movies_down_button.clicked.connect(self.movies_down_button_clicked)
+        self.movies_up_button.clicked.connect(self.movies_up_button_clicked)
+        self.movies_down_button.clicked.connect(self.movies_down_button_clicked)
 
-        self.show()
+    def movies_up_button_clicked(self):
+        print('Displayed the movies trending up!')
+        get_movies_up()
+        self.close()
+
+    def movies_down_button_clicked(self):
+        print('Displayed the movies trending down!')
+        get_movies_down()
+        self.close()
 
 
 def close_db(connection: sqlite3.Connection):
