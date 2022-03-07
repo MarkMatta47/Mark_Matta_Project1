@@ -1,18 +1,13 @@
 import sys
-
 import secrets
 import requests
 import sqlite3
 from typing import Tuple
-
-from functools import partial
 from PyQt5.QtGui import *
-from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QApplication, QPushButton, QLineEdit, QLabel, QRadioButton, \
-    QMessageBox, QWidget, QDialog, QInputDialog
-import gui
+from PyQt5 import QtCore
+from PyQt5.QtWidgets import QApplication, QPushButton, QLabel, QWidget
 
-# open text file
+
 file1 = open('output.txt', 'w')
 
 imdb_id = ''
@@ -24,6 +19,7 @@ def main():
 
     app = QApplication(sys.argv)
     ex = MainWindow()
+    print(ex)
 
     # # loop through list and write data for each show Id to output file
     for i in range(len(id_num_list)):
@@ -31,18 +27,6 @@ def main():
         file1.write('\n')
 
     get_top250_data()
-
-    # get_top250_movies(cursor)
-    # get_top_tvs(cursor)
-    # get_popular_movies(cursor)
-    # add_show_data_to_db(cursor)
-
-    # function call to add ratings data to db
-    # for i in range(len(id_num_list)):
-    #     add_rating_data_to_db(cursor, id_num_list[i])
-    #
-    # for i in range(len(rank_change_list)):
-    #     get_movie_rating_data(cursor, rank_change_list[i])
 
     sys.exit(app.exec_())
 
@@ -202,11 +186,11 @@ def get_movie_rating_data(cursor: sqlite3.Cursor, id_num: str, conn):
         return
     data = results.json()
 
-    cursor.execute('''INSERT INTO movie_ratings_data (imdb_id, title, fullTitle, year, total_rating, total_rating_votes, rating_percent_10,
-    rating_votes_10, rating_percent_9, rating_votes_9, rating_percent_8, rating_votes_8, rating_percent_7,
-    rating_votes_7, rating_percent_6, rating_votes_6, rating_percent_5, rating_votes_5, rating_percent_4,
-    rating_votes_4, rating_percent_3, rating_votes_3, rating_percent_2, rating_votes_2, rating_percent_1,
-    rating_votes_1) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',
+    cursor.execute('''INSERT INTO movie_ratings_data (imdb_id, title, fullTitle, year, total_rating, total_rating_votes,
+    rating_percent_10, rating_votes_10, rating_percent_9, rating_votes_9, rating_percent_8, rating_votes_8, 
+    rating_percent_7, rating_votes_7, rating_percent_6, rating_votes_6, rating_percent_5, rating_votes_5, 
+    rating_percent_4, rating_votes_4, rating_percent_3, rating_votes_3, rating_percent_2, rating_votes_2, 
+    rating_percent_1, rating_votes_1) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',
                    (data['imDbId'], data['title'], data['fullTitle'], data['year'],
                     data['totalRating'], data['totalRatingVotes'],
                     data['ratings'][0]['percent'], data['ratings'][0]['votes'],
@@ -331,6 +315,7 @@ def setup_db(cursor: sqlite3.Cursor):
 class MainWindow(QWidget):
     def __init__(self):
         super(MainWindow, self).__init__()
+        self.display_window = None
         conn, cursor = open_db("sprint2_db.sqlite")
         self.title = QLabel(self)
         self.update_info_button = QPushButton(self)
@@ -388,9 +373,48 @@ class MainWindow(QWidget):
         self.close()
 
     def display_button_clicked(self):
-        print('displayed!')
+        print('Displayed!')
+        self.display_window = DisplayWindow()
+        self.display_window.show()
         self.close()
 
+
+class DisplayWindow(QWidget):
+    def __init__(self):
+        super(DisplayWindow, self).__init__()
+        self.title = QLabel(self)
+        self.movie_info_button = QPushButton(self)
+        self.show_info_button = QPushButton(self)
+        self.setup_ui()
+
+    def setup_ui(self):
+        # Window
+        self.resize(600, 500)
+        window_width = int(self.frameGeometry().width())
+        self.setWindowTitle("Display Window")
+
+        # Title
+        self.title.setText("Choose an option")
+        self.title.setFont(QFont('Georgia', 16, QFont.Bold))
+        self.title.adjustSize()
+        self.title.setAlignment(QtCore.Qt.AlignCenter)
+        self.title.move(int((window_width - self.title.width()) / 2), 100)
+
+        # Movies Button
+        self.movie_info_button.resize(100, 50)
+        self.movie_info_button.move(250, 300)
+        self.movie_info_button.setText('Movies')
+
+        # Shows Button
+        self.show_info_button.resize(100, 50)
+        self.show_info_button.move(355, 300)
+        self.show_info_button.setText('Shows')
+
+        # Signals/Slots
+        # self.movie_info_button.clicked.connect(self.movie_info_button)
+        # self.show_info_button.clicked.connect(self.show_info_button)
+
+        self.show()
 
 
 def close_db(connection: sqlite3.Connection):
@@ -401,4 +425,3 @@ def close_db(connection: sqlite3.Connection):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     main()
-
