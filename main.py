@@ -7,9 +7,9 @@ from PyQt5.QtGui import QFont
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QApplication, QPushButton, QLabel, QWidget
 from PyQt5 import QtWidgets
-from pyqtgraph import PlotWidget, plot
-import pyqtgraph as pg
-import os
+# from pyqtgraph import PlotWidget, plot
+# import pyqtgraph as pg
+# import os
 
 
 file1 = open('output.txt', 'w')
