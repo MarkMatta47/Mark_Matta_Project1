@@ -3,7 +3,7 @@ import secrets
 import requests
 import sqlite3
 from typing import Tuple
-from PyQt5.QtGui import *
+from PyQt5.QtGui import QFont
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QApplication, QPushButton, QLabel, QWidget
 
@@ -187,9 +187,9 @@ def get_movie_rating_data(cursor: sqlite3.Cursor, id_num: str, conn):
     data = results.json()
 
     cursor.execute('''INSERT INTO movie_ratings_data (imdb_id, title, fullTitle, year, total_rating, total_rating_votes,
-    rating_percent_10, rating_votes_10, rating_percent_9, rating_votes_9, rating_percent_8, rating_votes_8, 
-    rating_percent_7, rating_votes_7, rating_percent_6, rating_votes_6, rating_percent_5, rating_votes_5, 
-    rating_percent_4, rating_votes_4, rating_percent_3, rating_votes_3, rating_percent_2, rating_votes_2, 
+    rating_percent_10, rating_votes_10, rating_percent_9, rating_votes_9, rating_percent_8, rating_votes_8,
+    rating_percent_7, rating_votes_7, rating_percent_6, rating_votes_6, rating_percent_5, rating_votes_5,
+    rating_percent_4, rating_votes_4, rating_percent_3, rating_votes_3, rating_percent_2, rating_votes_2,
     rating_percent_1, rating_votes_1) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',
                    (data['imDbId'], data['title'], data['fullTitle'], data['year'],
                     data['totalRating'], data['totalRatingVotes'],
