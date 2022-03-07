@@ -1,7 +1,16 @@
+import sys
+
 import secrets
 import requests
 import sqlite3
 from typing import Tuple
+
+from functools import partial
+from PyQt5.QtGui import *
+from PyQt5 import QtWidgets, QtCore
+from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QApplication, QPushButton, QLineEdit, QLabel, QRadioButton, \
+    QMessageBox, QWidget, QDialog, QInputDialog
+import gui
 
 # open text file
 file1 = open('output.txt', 'w')
@@ -11,37 +20,31 @@ imdb_id_list = []
 
 
 def main():
-    # create list of Ids
     id_num_list = ['tt7462410', 'tt5491994', 'tt0081834', 'tt0096697', 'tt1492966']
-    rank_change_list = ['tt8851148', 'tt10733228', 'tt10298810', 'tt10023022']
+
+    app = QApplication(sys.argv)
+    ex = MainWindow()
 
     # # loop through list and write data for each show Id to output file
     for i in range(len(id_num_list)):
         print_show_data(id_num_list[i])
         file1.write('\n')
 
-    # function call for getting top 250 show data
     get_top250_data()
 
-    conn, cursor = open_db("sprint2_db.sqlite")
-    setup_db(cursor)
-
-    get_top250_movies(cursor)
-    get_top_tvs(cursor)
-    get_popular_movies(cursor)
-
-    # function call to add show data to db
-    add_show_data_to_db(cursor)
+    # get_top250_movies(cursor)
+    # get_top_tvs(cursor)
+    # get_popular_movies(cursor)
+    # add_show_data_to_db(cursor)
 
     # function call to add ratings data to db
-    for i in range(len(id_num_list)):
-        add_rating_data_to_db(cursor, id_num_list[i])
+    # for i in range(len(id_num_list)):
+    #     add_rating_data_to_db(cursor, id_num_list[i])
+    #
+    # for i in range(len(rank_change_list)):
+    #     get_movie_rating_data(cursor, rank_change_list[i])
 
-    for i in range(len(rank_change_list)):
-        get_movie_rating_data(cursor, id_num_list[i])
-
-    print(type(conn))
-    close_db(conn)
+    sys.exit(app.exec_())
 
 
 def print_show_data(id_num: str):
@@ -65,7 +68,7 @@ def print_show_data(id_num: str):
             file1.write('\n')
 
 
-def add_show_data_to_db(cursor: sqlite3.Cursor):
+def add_show_data_to_db(cursor: sqlite3.Cursor, conn):
     # use secret key to get show ratings data
     loc = f"https://imdb-api.com/en/API/Top250TVs/{secrets.secret_key}/"
     results = requests.get(loc)
@@ -80,13 +83,15 @@ def add_show_data_to_db(cursor: sqlite3.Cursor):
                         imDbRatingCount) VALUES (?, ?, ?, ?, ?, ?, ?)''',
                        (entry['id'], entry['title'], entry['fullTitle'], entry['year'], entry['crew'],
                         entry['imDbRating'], entry['imDbRatingCount']))
+        conn.commit()
     cursor.execute('''INSERT INTO top_250_data (imdb_id, title, fullTitle, year, crew, imDbRating,
                             imDbRatingCount) VALUES (?, ?, ?, ?, ?, ?, ?)''',
                    ('tt7462410', 'The Wheel of Time', 'The Wheel of Time (TV Series 2021– )', '2021',
                     'People', '0', '84387'))
+    conn.commit()
 
 
-def add_rating_data_to_db(cursor: sqlite3.Cursor, id_num: str):
+def add_rating_data_to_db(cursor: sqlite3.Cursor, id_num: str, conn):
     # use secret key to get show ratings data
     loc = f"https://imdb-api.com/en/API/UserRatings/{secrets.secret_key}/{id_num}"
     results = requests.get(loc)
@@ -111,6 +116,7 @@ def add_rating_data_to_db(cursor: sqlite3.Cursor, id_num: str):
                     data['ratings'][7]['percent'], data['ratings'][7]['votes'],
                     data['ratings'][8]['percent'], data['ratings'][8]['votes'],
                     data['ratings'][9]['percent'], data['ratings'][9]['votes']))
+    conn.commit()
 
 
 def get_top250_data():
@@ -121,7 +127,6 @@ def get_top250_data():
         print("help!")
         return
     data = results.json()
-    print(data)
 
     for key, value in data.items():
         if key == 'items':
@@ -137,7 +142,7 @@ def get_top250_data():
     return data
 
 
-def get_top_tvs(cursor: sqlite3.Cursor):
+def get_top_tvs(cursor: sqlite3.Cursor, conn):
     # use secret key to get show ratings data
     loc = f"https://imdb-api.com/en/API/MostPopularTVs/{secrets.secret_key}/"
     results = requests.get(loc)
@@ -151,9 +156,10 @@ def get_top_tvs(cursor: sqlite3.Cursor):
                         imDbRatingCount) VALUES (?, ?, ?, ?, ?, ?, ?,?,?)''',
                        (entry['id'], entry['rank'], entry['rankUpDown'], entry['title'], entry['fullTitle'],
                         entry['year'], entry['crew'], entry['imDbRating'], entry['imDbRatingCount']))
+        conn.commit()
 
 
-def get_top250_movies(cursor: sqlite3.Cursor):
+def get_top250_movies(cursor: sqlite3.Cursor, conn):
     # use secret key to get show ratings data
     loc = f"https://imdb-api.com/en/API/Top250Movies/{secrets.secret_key}/"
     results = requests.get(loc)
@@ -167,9 +173,10 @@ def get_top250_movies(cursor: sqlite3.Cursor):
                         imDbRatingCount) VALUES (?, ?, ?, ?, ?, ?,?, ?)''',
                        (entry['id'], entry['rank'], entry['title'], entry['fullTitle'],
                         entry['year'], entry['crew'], entry['imDbRating'], entry['imDbRatingCount']))
+        conn.commit()
 
 
-def get_popular_movies(cursor: sqlite3.Cursor):
+def get_popular_movies(cursor: sqlite3.Cursor, conn):
     # use secret key to get show ratings data
     loc = f"https://imdb-api.com/en/API/MostPopularMovies/{secrets.secret_key}/"
     results = requests.get(loc)
@@ -183,9 +190,10 @@ def get_popular_movies(cursor: sqlite3.Cursor):
                         imDbRatingCount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                        (entry['id'], entry['rank'], entry['rankUpDown'], entry['title'], entry['fullTitle'],
                         entry['year'], entry['crew'], entry['imDbRating'], entry['imDbRatingCount']))
+        conn.commit()
 
 
-def get_movie_rating_data(cursor: sqlite3.Cursor, id_num: str):
+def get_movie_rating_data(cursor: sqlite3.Cursor, id_num: str, conn):
     # use secret key to get show ratings data
     loc = f"https://imdb-api.com/en/API/UserRatings/{secrets.secret_key}/{id_num}"
     results = requests.get(loc)
@@ -211,6 +219,7 @@ def get_movie_rating_data(cursor: sqlite3.Cursor, id_num: str):
                     data['ratings'][7]['percent'], data['ratings'][7]['votes'],
                     data['ratings'][8]['percent'], data['ratings'][8]['votes'],
                     data['ratings'][9]['percent'], data['ratings'][9]['votes']))
+    conn.commit()
 
 
 def open_db(filename: str) -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
@@ -319,6 +328,71 @@ def setup_db(cursor: sqlite3.Cursor):
         );''')
 
 
+class MainWindow(QWidget):
+    def __init__(self):
+        super(MainWindow, self).__init__()
+        conn, cursor = open_db("sprint2_db.sqlite")
+        self.title = QLabel(self)
+        self.update_info_button = QPushButton(self)
+        self.display_button = QPushButton(self)
+        self.sql_cursor = cursor
+        self.sql_conn = conn
+        setup_db(self.sql_cursor)
+        self.setup_ui()
+
+    def setup_ui(self):
+        # Window
+        self.resize(600, 500)
+        window_width = int(self.frameGeometry().width())
+        self.setWindowTitle("Main Window")
+
+        # Title
+        self.title.setText("Choose an option")
+        self.title.setFont(QFont('Georgia', 16, QFont.Bold))
+        self.title.adjustSize()
+        self.title.setAlignment(QtCore.Qt.AlignCenter)
+        self.title.move(int((window_width - self.title.width()) / 2), 100)
+
+        # Update Button
+        self.update_info_button.resize(100, 50)
+        self.update_info_button.move(250, 300)
+        self.update_info_button.setText('Update')
+
+        # Display Button
+        self.display_button.resize(100, 50)
+        self.display_button.move(355, 300)
+        self.display_button.setText('Display')
+
+        # Signals/Slots
+        self.update_info_button.clicked.connect(self.update_button_clicked)
+        self.display_button.clicked.connect(self.display_button_clicked)
+
+        self.show()
+
+    def update_button_clicked(self):
+        print('updated!')
+        id_num_list = ['tt7462410', 'tt5491994', 'tt0081834', 'tt0096697', 'tt1492966']
+        rank_change_list = ['tt8851148', 'tt10733228', 'tt10298810', 'tt10023022']
+
+        add_show_data_to_db(self.sql_cursor, self.sql_conn)
+        get_top250_movies(self.sql_cursor, self.sql_conn)
+        get_top_tvs(self.sql_cursor, self.sql_conn)
+        get_popular_movies(self.sql_cursor, self.sql_conn)
+
+        for i in range(len(id_num_list)):
+            add_rating_data_to_db(self.sql_cursor, id_num_list[i], self.sql_conn)
+        for i in range(len(rank_change_list)):
+            get_movie_rating_data(self.sql_cursor, rank_change_list[i], self.sql_conn)
+
+        close_db(self.sql_conn)
+        self.close()
+
+    def display_button_clicked(self):
+        print('displayed!')
+        self.close()
+
+
+
 def close_db(connection: sqlite3.Connection):
     connection.commit()  # make sure any changes get saved
     connection.close()
@@ -327,3 +401,4 @@ def close_db(connection: sqlite3.Connection):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     main()
+
